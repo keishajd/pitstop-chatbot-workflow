@@ -1,0 +1,2401 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "5c0c73cc-5d6d-4d07-8d5c-03f038492408",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -96,
+        0
+      ],
+      "id": "cc159c68-a26a-4133-b4c0-b2e64bbf6165",
+      "name": "Webhook",
+      "webhookId": "5c0c73cc-5d6d-4d07-8d5c-03f038492408"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://stunning-returns-manuals-sticker.trycloudflare.com/api/sendText",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "chatId",
+              "value": "={{ $('Webhook').first().json.body.payload.from }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json.reply_text }}"
+            },
+            {
+              "name": "session",
+              "value": "default"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2160,
+        -176
+      ],
+      "id": "1f5790c8-a36b-411b-b3f6-784a0903be83",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mxKwv5NubXkasPex",
+          "name": "WAHA_Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "095e46fa-a280-41cf-87cc-a4232dd4b729",
+              "name": "reply_text",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "3683302b-aa74-4b6f-8d71-63dd65b3ea7e",
+              "name": "target_id",
+              "value": "={{ $('Webhook').first().json.body.payload.body }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {
+          "dotNotation": false
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1968,
+        -176
+      ],
+      "id": "61f778c1-9910-4f5f-9232-2f0cf6b6dcc8",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.output }}",
+                    "rightValue": "GENERAL",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "cf6b8ca4-e194-4bd1-884f-55ec32af8e6d"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Jalur GENERAL"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "0b3fdb9c-9a04-4cc6-b13e-d89768999325",
+                    "leftValue": "={{ $json.output }}",
+                    "rightValue": "BOOKING",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Jalur Booking"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        896,
+        0
+      ],
+      "id": "6d3f37a3-a2c1-41b6-b8a1-6cc6d3032827",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('CONFIG').first().json.Sheet_ID }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1990645798,
+          "mode": "list",
+          "cachedResultName": "DB_Booking",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JMWu2WawB1ScebVfxEBJVDBKIdV8dyNcqi92sB76KXs/edit#gid=1990645798"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2528,
+        256
+      ],
+      "id": "a2ebabbb-8a12-4d35-bb79-d863c78743f1",
+      "name": "Get row(s) in sheet",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "aClqJvRitnytsfHa",
+          "name": "GoogleOuth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e1c2ca9c-ff07-4d29-a7d1-aefaf0e5cecd",
+              "leftValue": "={{ $json[\"isAvailable\"] }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3168,
+        240
+      ],
+      "id": "d800e1b8-2e63-46ff-a296-c6e929e63313",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('CONFIG').first().json.Sheet_ID }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1990645798,
+          "mode": "list",
+          "cachedResultName": "DB_Booking",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JMWu2WawB1ScebVfxEBJVDBKIdV8dyNcqi92sB76KXs/edit#gid=1990645798"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ new Date().toISOString() }}",
+            "No_WA": "={{ $('Webhook').first().json.body.from || $('Webhook').first().json.body.payload.from }}",
+            "OrderID": "={{ $('Code').item.json.data.orderId }}",
+            "Nama": "={{ $('Code').item.json.data.Nama }}",
+            "Unit_ID": "={{ $('Code').item.json.data.Unit_ID }}",
+            "Tanggal": "={{ $('Code').item.json.data.Tanggal }}",
+            "Jam_Mulai": "={{ $('Code').item.json.data.Jam_Mulai }}",
+            "Durasi": "={{ $('Code').item.json.data.Durasi }}",
+            "Status": "Pending"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "OrderID",
+              "displayName": "OrderID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nama",
+              "displayName": "Nama",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "No_WA",
+              "displayName": "No_WA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Unit_ID",
+              "displayName": "Unit_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tanggal",
+              "displayName": "Tanggal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Jam_Mulai",
+              "displayName": "Jam_Mulai",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Durasi",
+              "displayName": "Durasi",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Jam_Selesai",
+              "displayName": "Jam_Selesai",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Total_Harga",
+              "displayName": "Total_Harga",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3632,
+        208
+      ],
+      "id": "4d7bce28-f498-4577-b143-28f666a6dfd9",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "aClqJvRitnytsfHa",
+          "name": "GoogleOuth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://stunning-returns-manuals-sticker.trycloudflare.com/api/sendText",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n  JSON.stringify({\n    chatId: $('Webhook').first().json.body.payload.from,\n    session: \"default\",\n    text: $('Code').first().json.message\n  })\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        3408,
+        432
+      ],
+      "id": "00b349d4-09c0-4022-af12-793fdb51b974",
+      "name": "HTTP Request2",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mxKwv5NubXkasPex",
+          "name": "WAHA_Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// --- 1. AMBIL DATA ---\nlet aiData = $(\"AI Agent\").first().json; \nif (aiData.output && typeof aiData.output === 'object') aiData = aiData.output;\n\n// Ambil data sheet dengan aman\nlet rawUnits = [];\nlet allBookings = [];\ntry { rawUnits = $(\"Get Units\").all().map(item => item.json); } catch(e) {}\ntry { allBookings = $(\"Get row(s) in sheet\").all().map(item => item.json); } catch(e) {}\n\n// --- 2. CONFIG (PENGATURAN JAM) ---\nconst JAM_BUKA = 9;   // Jam 9 Pagi Buka\nconst JAM_TUTUP = 23; // Jam 11 Malam Tutup Toko\nconst LAST_ORDER = 22; // Jam 10 Malam (Batas Terima Booking)\n\n// --- 3. OLAH DATA INPUT (KAMUS CERDAS) ---\nlet inputUnit = (aiData.unit || \"ANY-PREMIUM\").toUpperCase().trim();\n\n// LOGIKA PERBAIKAN TYPO\nif (inputUnit.includes(\"REGULER\") || inputUnit.includes(\"BIASA\") || inputUnit === \"REG\") {\n    if (inputUnit.length < 15) { \n        inputUnit = \"ANY-REGULAR\";\n    } else {\n        inputUnit = inputUnit.replace(\"REGULER\", \"REGULAR\");\n    }\n}\nelse if (inputUnit === \"PREMIUM\" || inputUnit === \"VIP\") {\n    inputUnit = \"ANY-PREMIUM\";\n}\n\nif (inputUnit === \"REGULAR\") inputUnit = \"ANY-REGULAR\";\nif (inputUnit === \"PREMIUM\") inputUnit = \"ANY-PREMIUM\";\n\nconst userReq = {\n    nama: aiData.nama || \"Customer\", \n    rawUnit: inputUnit, \n    tanggal: aiData.tanggal, \n    jamMulaiStr: String(aiData.jam_mulai || \"00:00\"), \n    durasi: parseFloat(aiData.durasi || 1)\n};\n\n// --- 4. HITUNG JAM SELESAI & VALIDASI ---\nconst [h, m] = userReq.jamMulaiStr.split(\":\").map(Number);\nconst startDecimal = h + ((m||0)/60);\nconst endDecimal = startDecimal + userReq.durasi;\n\n// A. VALIDASI JAM OPERASIONAL (Jika user minta jam aneh-aneh)\nif (startDecimal < JAM_BUKA) return [{ json: { isAvailable: false, message: `⚠️ Toko belum buka jam segitu (Buka ${JAM_BUKA}:00).` } }];\n\n// Jika User MAKSA minta jam 23:00 atau 24:00 (Di atas jam tutup)\nif (startDecimal >= JAM_TUTUP) {\n    return [{ json: { isAvailable: false, message: \"Maaf kaka kami sudah tutup untuk hari ini, ingin booking untuk besok?\" } }];\n}\n\nif (endDecimal > JAM_TUTUP) {\n    const sisa = JAM_TUTUP - startDecimal;\n    return [{ json: { isAvailable: false, message: `⚠️ Melewati jam tutup. Maksimal cuma bisa main ${sisa} jam.` } }];\n}\n\n// B. GATEKEEPER WAKTU (LOGIKA PINTAR MASA LALU & LAST ORDER) 🌟\nconst now = new Date();\nconst utc = now.getTime() + (now.getTimezoneOffset() * 60000);\nconst wibTime = new Date(utc + (3600000 * 7)); // WIB\n\nconst todayDate = wibTime.toISOString().split('T')[0];\nconst currentHour = wibTime.getHours();\nconst currentMin = wibTime.getMinutes();\nconst currentDecimal = currentHour + (currentMin / 60);\n\n// Cek Logika Tanggal\nif (userReq.tanggal < todayDate) {\n    return [{ json: { isAvailable: false, message: `⚠️ Tanggal yang dipilih (${userReq.tanggal}) sudah lewat kak.` } }];\n}\n\nif (userReq.tanggal === todayDate) {\n    // Jika User Minta Jam yang sudah lewat (Contoh: Minta jam 12, Padahal sekarang jam 13 atau jam 22)\n    if (startDecimal < currentDecimal) {\n        \n        // 1. Cari jam terdekat berikutnya (Next Hour)\n        const nextHour = Math.ceil(currentDecimal); \n        \n        // 2. CEK APAKAH JAM BERIKUTNYA ITU SUDAH TUTUP?\n        // Logic: Jika Next Hour (misal 23) > Last Order (22) --> TUTUP\n        // Logic: Jika Next Hour (misal 14) > Last Order (22) --> FALSE (Masih Buka)\n        if (nextHour > LAST_ORDER) {\n             return [{ \n                json: { \n                    isAvailable: false, \n                    message: \"Maaf kaka kami sudah tutup untuk hari ini, ingin booking untuk besok?\" \n                } \n            }];\n        }\n        \n        // 3. Jika masih buka (misal jam 1 siang), tawarkan jam berikutnya\n        const nextHourStr = String(nextHour).padStart(2, '0') + \":00\";\n        return [{ \n            json: { \n                isAvailable: false, \n                message: `⚠️ Jam ${userReq.jamMulaiStr} sudah lewat kak (Sekarang jam ${currentHour}:${String(currentMin).padStart(2,'0')}).\\n\\nMau geser ke jam *${nextHourStr}* aja?` \n            } \n        }];\n    }\n}\n\nfunction formatTime(decimalTime) {\n    const hrs = Math.floor(decimalTime);\n    const mins = Math.round((decimalTime - hrs) * 60);\n    return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;\n}\nconst jamSelesaiFix = formatTime(endDecimal);\n\n\n// --- 5. PARSING UNIT DATABASE ---\nconst UNIT_LIST = { PREMIUM: [], REGULAR: [] };\nconst ALL_ACTIVE_UNITS = [];\n\nfor (const unit of rawUnits) {\n    const uID = String(unit.Unit_ID || unit.Unit || \"\").trim().toUpperCase();\n    const uStatus = String(unit.Status_Unit || unit.Status || \"Aktif\").toLowerCase();\n    const isMaintenance = uStatus.includes(\"rusak\") || uStatus.includes(\"non\") || uStatus.includes(\"main\");\n    \n    if (uID && !isMaintenance) {\n        ALL_ACTIVE_UNITS.push(uID);\n        if (uID.includes(\"-P\") || uID.includes(\"PREMIUM\")) UNIT_LIST.PREMIUM.push(uID);\n        else UNIT_LIST.REGULAR.push(uID);\n    }\n}\n\nif (ALL_ACTIVE_UNITS.length === 0) return [{ json: { isAvailable: false, message: \"⚠️ Error DB: Tidak ada unit aktif terbaca.\" } }];\n\n\n// --- 6. CEK KETERSEDIAAN ---\nfunction checkAvailability(targetUnit) {\n    const unitBookings = allBookings.filter(b => {\n        const bUnit = String(b.Unit_ID || \"\").toUpperCase();\n        const bDate = String(b.Tanggal || \"\").substring(0, 10);\n        const bStatus = String(b.Status || \"\").toLowerCase().trim();\n        const isSlotFree = (bStatus === 'expired') || (bStatus === 'batal');\n\n        return (bUnit === targetUnit) && (bDate === userReq.tanggal) && (!isSlotFree);\n    });\n\n    for (const b of unitBookings) {\n        let dbStart = 0;\n        const rawJam = b.Jam_Mulai; \n        if (typeof rawJam === 'number') {\n            dbStart = (rawJam < 1) ? rawJam * 24 : rawJam;\n        } else {\n            const parts = String(rawJam).split(\":\");\n            dbStart = parseFloat(parts[0]) + (parseFloat(parts[1]||0)/60);\n        }\n        const dbEnd = dbStart + Number(b.Durasi || 0);\n\n        if (startDecimal < dbEnd && endDecimal > dbStart) return false;\n    }\n    return true;\n}\n\n\n// --- 7. AUTO ASSIGN UNIT ---\nlet assignedUnit = null;\nlet msgError = \"\";\n\nif (userReq.rawUnit.startsWith(\"ANY\")) {\n    const type = userReq.rawUnit.includes(\"PREMIUM\") ? \"PREMIUM\" : \"REGULAR\";\n    const list = UNIT_LIST[type];\n    for (const u of list) {\n        if (checkAvailability(u)) { assignedUnit = u; break; }\n    }\n    if (!assignedUnit) msgError = `⚠️ Semua unit ${type} penuh di jam ${userReq.jamMulaiStr}.`;\n} else {\n    if (checkAvailability(userReq.rawUnit)) {\n        assignedUnit = userReq.rawUnit;\n    } else {\n        msgError = `⚠️ Unit ${userReq.rawUnit} sudah terisi.`;\n    }\n}\n\nif (!assignedUnit) return [{ json: { isAvailable: false, message: msgError } }];\n\n\n// --- 8. HITUNG HARGA ---\nfunction calculatePrice(unitID, duration) {\n    const d = new Date(userReq.tanggal);\n    const isWeekend = (d.getDay() === 0 || d.getDay() === 6);\n    const isPremium = unitID.includes(\"-P\") || unitID.includes(\"PREMIUM\");\n    const rate = isPremium ? (isWeekend ? 45000 : 40000) : (isWeekend ? 35000 : 30000);\n    return rate * duration;\n}\nconst totalHarga = calculatePrice(assignedUnit, userReq.durasi);\n\n\n// --- 9. OUTPUT FINAL ---\nreturn [{\n  json: {\n    isAvailable: true,\n    data: {\n      orderId: \"ORD-\" + Date.now(),\n      Nama: userReq.nama,\n      Unit_ID: assignedUnit, \n      Tanggal: userReq.tanggal,\n      Jam_Mulai: userReq.jamMulaiStr,\n      Durasi: userReq.durasi,\n      Jam_Selesai: jamSelesaiFix, \n      Total_Harga: totalHarga,     \n      Status: \"Pending\", \n      Note: \"\" \n    }\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2944,
+        240
+      ],
+      "id": "925ded5e-a944-453c-8e0d-738a2bd6afe2",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://stunning-returns-manuals-sticker.trycloudflare.com/api/sendText",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n  {\n    \"chatId\": $('Webhook').first().json.body.payload.from,\n    \"session\": \"default\",\n    \"text\": `🏁 *WAITING FOR PAYMENT* 🏁\nPitstop Gaming\n\nHalo Kak *${ $('Code').first().json.data.Nama }*!\nBookingan kamu sudah kami catat, tinggal satu langkah lagi.\n\n📅 Tgl: ${ $('Code').first().json.data.Tanggal }\n⏰ Jam: ${ $('Code').first().json.data.Jam_Mulai }\n🎮 Unit: ${ $('Code').first().json.data.Unit_ID }\n⏳ Durasi: ${ $('Code').first().json.data.Durasi } Jam\n💰 Total: Rp ${ $('Code').first().json.data.Total_Harga }\n\n👇 *Klik Link di bawah untuk Bayar:*\n${ $('Midtrans').first().json.redirect_url }\n\n⚠️ *PENTING:*\n1. Booking otomatis batal jika belum dibayar dalam 3 menit.\n2. *Booking yang sudah dibayar TIDAK BISA di-cancel (Non-Refundable).*`\n  }\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        3840,
+        208
+      ],
+      "id": "e2b6f3da-0026-4059-87cd-aa1633aa85ca",
+      "name": "HTTP Request4",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mxKwv5NubXkasPex",
+          "name": "WAHA_Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "midtrans-notif",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        992
+      ],
+      "id": "24fa8c39-d132-4b59-b30d-4b9db5f62837",
+      "name": "Midtrans Callback",
+      "webhookId": "5c0c73cc-5d6d-4d07-8d5c-03f038492408"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7101599e-1688-41bf-969c-ed9a5d8f879f",
+              "leftValue": "={{ $json.body.transaction_status }}",
+              "rightValue": "settlement",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        992
+      ],
+      "id": "741ed6f8-93a2-4f00-a53b-04e86e02044b",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://stunning-returns-manuals-sticker.trycloudflare.com/api/sendText",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n  {\n    // 1. AMBIL NO WA DARI GOOGLE SHEET (Kolom \"No_WA\")\n    // Pastikan di Sheet kolomnya bernama \"No_WA\". Jika \"No_HP\", ganti jadi .No_HP\n    \"chatId\": $('Get row(s) in sheet1').first().json.No_WA, \n    \n    \"session\": \"default\",\n    \n    // 2. AMBIL DATA LAIN DARI GOOGLE SHEET JUGA\n    \"text\": `🏁 *BOOKING CONFIRMED* 🏁\nPitstop Gaming\n\nHalo Kak *${ $('Get row(s) in sheet1').first().json.Nama }*!\nPembayaran berhasil. Berikut jadwal main kamu:\n\n📅 Tgl: ${ $('Get row(s) in sheet1').first().json.Tanggal }\n⏰ Jam: ${ $('Get row(s) in sheet1').first().json.Jam_Mulai }\n🎮 Unit: ${ $('Get row(s) in sheet1').first().json.Unit_ID }\n⏳ Durasi: ${ $('Get row(s) in sheet1').first().json.Durasi } Jam\n\n📍 Lokasi: Ruko Maggiore Grande E7, Cihuni.\n(Google Maps: https://share.google/EbJOIKgunZQYUb09N)\n\nMohon datang 10 menit sebelum jam main ya.\nHappy Gaming! 🏎️🎮`\n  }\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        896,
+        960
+      ],
+      "id": "d898a05b-f3ca-4952-81bc-91ab5aa184a3",
+      "name": "HTTP Request5",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mxKwv5NubXkasPex",
+          "name": "WAHA_Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('CONFIG').first().json.Sheet_ID }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1990645798,
+          "mode": "list",
+          "cachedResultName": "DB_Booking",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JMWu2WawB1ScebVfxEBJVDBKIdV8dyNcqi92sB76KXs/edit#gid=1990645798"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "OrderID": "={{ $('Midtrans Callback').item.json.body.order_id }}",
+            "Status": "Booked"
+          },
+          "matchingColumns": [
+            "OrderID"
+          ],
+          "schema": [
+            {
+              "id": "OrderID",
+              "displayName": "OrderID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Nama",
+              "displayName": "Nama",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "No_WA",
+              "displayName": "No_WA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Unit_ID",
+              "displayName": "Unit_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Tanggal",
+              "displayName": "Tanggal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Jam_Mulai",
+              "displayName": "Jam_Mulai",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Durasi",
+              "displayName": "Durasi",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Jam_Selesai",
+              "displayName": "Jam_Selesai",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Total_Harga",
+              "displayName": "Total_Harga",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "cellFormat": "USER_ENTERED"
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        672,
+        960
+      ],
+      "id": "c1211cd8-1fdf-4b52-92f5-244d78d7db2e",
+      "name": "Update row in sheet",
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "aClqJvRitnytsfHa",
+          "name": "GoogleOuth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('CONFIG').first().json.Sheet_ID }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1990645798,
+          "mode": "list",
+          "cachedResultName": "DB_Booking",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JMWu2WawB1ScebVfxEBJVDBKIdV8dyNcqi92sB76KXs/edit#gid=1990645798"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "OrderID",
+              "lookupValue": "={{ $('Midtrans Callback').item.json.body.order_id }}"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        464,
+        960
+      ],
+      "id": "7825da44-0044-4169-b6d1-7336e1c70264",
+      "name": "Get row(s) in sheet1",
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "aClqJvRitnytsfHa",
+          "name": "GoogleOuth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.sandbox.midtrans.com/snap/v1/transactions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transaction_details\": {\n    \"order_id\": \"{{ $('Code').item.json.data.orderId }}\",\n    \"gross_amount\": {{ $('Code').item.json.data.Total_Harga }}\n  },\n  \"credit_card\": {\n    \"secure\": true\n  },\n  \"customer_details\": {\n    \"first_name\": \"{{ $('Code').item.json.data.Nama }}\",\n    \"email\": \"guest@pskingdome.com\",\n    \"phone\": \"{{ $('Code').item.json.data.No_HP || '08123456789' }}\"\n  },\n  \"item_details\": [\n    {\n      \"id\": \"{{ $('Code').item.json.data.Unit_ID }}\",\n      \"price\": {{ $('Code').item.json.data.Total_Harga }},\n      \"quantity\": 1,\n      \"name\": \"Sewa PS {{ $('Code').item.json.data.Unit_ID }} ({{ $('Code').item.json.data.Durasi }} Jam)\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        3424,
+        208
+      ],
+      "id": "9356a70d-106c-407d-b720-21b6d350b365",
+      "name": "Midtrans",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "kSoT2qkWQE9toJfK",
+          "name": "Unnamed credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        1184,
+        1024
+      ],
+      "id": "0b9706e9-3c2a-45bc-935a-af455a7199ec",
+      "name": "Maintanace Harian"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('CONFIG').first().json.Sheet_ID }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1990645798,
+          "mode": "list",
+          "cachedResultName": "DB_Booking",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JMWu2WawB1ScebVfxEBJVDBKIdV8dyNcqi92sB76KXs/edit#gid=1990645798"
+        },
+        "options": {
+          "outputFormatting": {
+            "values": {
+              "general": "FORMATTED_VALUE",
+              "date": "FORMATTED_STRING"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1504,
+        1024
+      ],
+      "id": "52045a63-605f-454c-97aa-6de953a35128",
+      "name": "Get row(s) in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "aClqJvRitnytsfHa",
+          "name": "GoogleOuth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Ambil data\nconst allData = items.map(item => item.json);\n\n// --- SETTING WAKTU INDONESIA (WIB) ---\n// Ini memaksa \"Hari Ini\" ikut jam Jakarta, bukan jam Server UTC\nconst now = new Date();\nconst todayString = now.toLocaleDateString('en-CA', { timeZone: 'Asia/Jakarta' });\n// Hasil todayString PASTI: \"2025-11-23\"\n\nconst dataBasi = [];\n\nfor (const booking of allData) {\n  // Ambil 10 karakter pertama: \"2025-11-22\"\n  const rawDate = String(booking.Tanggal || \"\");\n  const dbDate = rawDate.substring(0, 10);\n\n  if (dbDate.length < 10) continue;\n\n  // LOGIKA: Apakah \"2025-11-22\" < \"2025-11-23\"? -> YA (TRUE)\n  if (dbDate < todayString) {\n    dataBasi.push({ json: booking });\n  }\n}\n\nreturn dataBasi;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1712,
+        880
+      ],
+      "id": "e0b45ab8-84e7-4789-9243-8d5750cad69e",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('CONFIG').first().json.Sheet_ID }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1092432092,
+          "mode": "list",
+          "cachedResultName": "Arsip_Transaksi",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JMWu2WawB1ScebVfxEBJVDBKIdV8dyNcqi92sB76KXs/edit#gid=1092432092"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "OrderID": "={{ $json.OrderID }}",
+            "Timestamp": "={{ $json.Timestamp }}",
+            "Nama": "={{ $json.Nama }}",
+            "No_WA": "={{ $json.No_WA }}",
+            "Unit_ID": "={{ $json.Unit_ID }}",
+            "Tanggal": "={{ $json.Tanggal }}",
+            "Jam_Mulai": "={{ $json.Jam_Mulai }}",
+            "Durasi": "={{ $json.Durasi }}",
+            "Jam_Selesai": "={{ $json.Jam_Selesai }}",
+            "Total_Harga": "={{ $json.Total_Harga }}",
+            "Status": "={{ $json.Status }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "OrderID",
+              "displayName": "OrderID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nama",
+              "displayName": "Nama",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "No_WA",
+              "displayName": "No_WA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Unit_ID",
+              "displayName": "Unit_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tanggal",
+              "displayName": "Tanggal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Jam_Mulai",
+              "displayName": "Jam_Mulai",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Durasi",
+              "displayName": "Durasi",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Jam_Selesai",
+              "displayName": "Jam_Selesai",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Total_Harga",
+              "displayName": "Total_Harga",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1920,
+        880
+      ],
+      "id": "535c9f34-be85-42d0-8536-2689e209d7e8",
+      "name": "Append row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "aClqJvRitnytsfHa",
+          "name": "GoogleOuth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const allData = items.map(item => item.json);\n\n// --- SETTING WAKTU INDONESIA (WIB) ---\nconst now = new Date();\nconst todayString = now.toLocaleDateString('en-CA', { timeZone: 'Asia/Jakarta' });\n// Hasil todayString PASTI: \"2025-11-23\"\n\nconst dataAktif = [];\n\nfor (const booking of allData) {\n  const rawDate = String(booking.Tanggal || \"\");\n  const dbDate = rawDate.substring(0, 10);\n\n  // LOGIKA: \n  // 1. Jika tanggal error/kosong -> Simpan\n  // 2. Jika \"2025-11-23\" >= \"2025-11-23\" (Hari ini) -> Simpan\n  // 3. Jika \"2025-11-24\" >= \"2025-11-23\" (Besok) -> Simpan\n  \n  if (dbDate.length < 10 || dbDate >= todayString) {\n    dataAktif.push({ json: booking });\n  }\n}\n\nreturn dataAktif;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1712,
+        1056
+      ],
+      "id": "c98273f4-fa9a-4d61-9c64-5845f1a583ff",
+      "name": "Code in JavaScript1",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "clear",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('CONFIG').first().json.Sheet_ID }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1990645798,
+          "mode": "list",
+          "cachedResultName": "DB_Booking",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JMWu2WawB1ScebVfxEBJVDBKIdV8dyNcqi92sB76KXs/edit#gid=1990645798"
+        },
+        "clear": "specificRows",
+        "startIndex": 2,
+        "rowsToDelete": 100
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1920,
+        1056
+      ],
+      "id": "56a60b54-29d5-460c-862a-2150c2307d18",
+      "name": "Clear sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "aClqJvRitnytsfHa",
+          "name": "GoogleOuth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('CONFIG').first().json.Sheet_ID }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1990645798,
+          "mode": "list",
+          "cachedResultName": "DB_Booking",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JMWu2WawB1ScebVfxEBJVDBKIdV8dyNcqi92sB76KXs/edit#gid=1990645798"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "OrderID": "={{ $('Code in JavaScript1').item.json.OrderID }}",
+            "Timestamp": "={{ $('Code in JavaScript1').item.json.Timestamp }}",
+            "Nama": "={{ $('Code in JavaScript1').item.json.Nama }}",
+            "No_WA": "={{ $('Code in JavaScript1').item.json.No_WA }}",
+            "Unit_ID": "={{ $('Code in JavaScript1').item.json.Unit_ID }}",
+            "Tanggal": "={{ $('Code in JavaScript1').item.json.Tanggal }}",
+            "Jam_Mulai": "={{ $('Code in JavaScript1').item.json.Jam_Mulai }}",
+            "Durasi": "={{ $('Code in JavaScript1').item.json.Durasi }}",
+            "Status": "={{ $('Code in JavaScript1').item.json.Status }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "OrderID",
+              "displayName": "OrderID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nama",
+              "displayName": "Nama",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "No_WA",
+              "displayName": "No_WA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Unit_ID",
+              "displayName": "Unit_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tanggal",
+              "displayName": "Tanggal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Jam_Mulai",
+              "displayName": "Jam_Mulai",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Durasi",
+              "displayName": "Durasi",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Jam_Selesai",
+              "displayName": "Jam_Selesai",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Total_Harga",
+              "displayName": "Total_Harga",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2128,
+        1056
+      ],
+      "id": "9500f6f9-370b-4a46-9292-90ca17daaf9b",
+      "name": "Append row in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "aClqJvRitnytsfHa",
+          "name": "GoogleOuth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"is_complete\": {\n      \"type\": \"boolean\",\n      \"description\": \"True if ALL data present. False otherwise.\"\n    },\n    \"final_confirmation\": {\n      \"type\": \"boolean\",\n      \"description\": \"True only if user says YES. False otherwise.\"\n    },\n    \"bot_response\": {\n      \"type\": \"string\",\n      \"description\": \"Text reply to user.\"\n    },\n    \"nama\": {\n      \"type\": \"string\",\n      \"description\": \"Customer name or empty string.\"\n    },\n    \"unit\": {\n      \"type\": \"string\",\n      \"description\": \"Premium/Regular or empty string.\"\n    },\n    \"tanggal\": {\n      \"type\": \"string\",\n      \"description\": \"YYYY-MM-DD or empty string.\"\n    },\n    \"jam_mulai\": {\n      \"type\": \"string\",\n      \"description\": \"HH:mm or empty string.\"\n    },\n    \"durasi\": {\n      \"type\": \"string\",\n      \"description\": \"Number (1, 2, 3) or empty string.\"\n    }\n  },\n  \"required\": [\n    \"is_complete\",\n    \"final_confirmation\",\n    \"bot_response\",\n    \"nama\",\n    \"unit\",\n    \"tanggal\",\n    \"jam_mulai\",\n    \"durasi\"\n  ]\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1424,
+        480
+      ],
+      "id": "92ff77c6-82be-426e-a08e-91263e952958",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Webhook').item.json.body.payload.from }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1328,
+        448
+      ],
+      "id": "2c4b1190-2521-46af-9b3e-216bae830e9b",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Webhook').item.json.body.payload.body }} (Jika user tidak sebut tanggal, GUNAKAN TANGGAL: {{ $('Date & Time').item.json.tanggal_hari_ini }})",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=Kamu adalah \"Pitstop Admin\".\n\n## KONTEKS\nHARI INI: {{ $('Date & Time').item.json.tanggal_hari_ini }}\n\n## TUGAS UTAMA\nIsi JSON berdasarkan pesan user dengan teliti.\n\n## LOGIKA PENGISIAN DATA & VALIDASI\n1. **nama:** Ambil nama orang.\n2. **unit:**\n   - Cari kata kunci \"Premium\" atau \"Regular\".\n   - **JANGAN MENEBAK.** Jika user tidak menyebutkan tipe unit, biarkan KOSONG (\"\").\n   - Jangan default ke \"Regular\".\n3. **jam_mulai:** Ubah ke format 24 jam (misal 14:00).\n4. **durasi:** Ambil angka saja (Default 1 jika tidak disebut).\n5. **tanggal:**\n   - Jika TIDAK ADA tanggal di pesan, ISI DENGAN \"{{ $('Date & Time').item.json.tanggal_hari_ini }}\".\n   - **VALIDASI H+2:** Cek tanggal yang diminta. Jika tanggal tersebut lebih dari 2 hari setelah HARI INI, tolak dengan sopan di `bot_response`.\n\n## SKENARIO RESPON (\"bot_response\")\n\n1. JIKA TANGGAL KEJAUHAN (Lebih dari 2 hari kedepan):\n   \"Mohon maaf Kak, kami saat ini hanya bisa melayani booking maksimal untuk 2 hari ke depan (H+2) ya. 🙏\"\n\n2. JIKA DATA BELUM LENGKAP (Termasuk jika UNIT belum dipilih):\n   \"Siap kak [Nama]. Mau main di unit **Regular** atau **Premium**?\n   \n   Mohon lengkapi data ini ya:\n   👤 Nama: [Nama]\n   🎮 Unit: [Unit atau 'Pilih Regular/Premium']\n   📅 Tanggal: [Tanggal]\n   ⏰ Jam: [Jam]\n   ⏳ Durasi: [Durasi]\"\n\n3. JIKA DATA LENGKAP:\n   \"Data diterima:\n   Nama: [Nama]\n   Unit: [Unit]\n   Tanggal: [Tanggal]\n   Jam: [Jam]\n   Durasi: [Durasi] Jam\n   \n   Apakah data di atas sudah benar? Jika sudah, silakan ketik 'YA' untuk konfirmasi.\"\n\n4. JIKA USER BILANG \"YA\":\n   \"Siap, booking diproses... ⏳\" (Set final_confirmation: true)\n\n## CONTOH PEMBELAJARAN (FEW-SHOT)\n\nContoh 1 (User Lupa Unit):\nUser: \"Booking keisha jam 2 siang\"\nOutput:\n{\n  \"is_complete\": false,\n  \"final_confirmation\": false,\n  \"bot_response\": \"Halo Kak Keisha, mau main di unit **Regular** atau **Premium**?\\n\\nMohon lengkapi datanya ya:\\n👤 Nama: Keisha\\n🎮 Unit: (Pilih Regular/Premium)\\n📅 Tanggal: {{ $('Date & Time').item.json.tanggal_hari_ini }}\\n⏰ Jam: 14:00\",\n  \"nama\": \"Keisha\",\n  \"unit\": \"\",\n  \"tanggal\": \"{{ $('Date & Time').item.json.tanggal_hari_ini }}\",\n  \"jam_mulai\": \"14:00\",\n  \"durasi\": \"1\"\n}\n\nContoh 2 (Lengkap):\nUser: \"Premium kak, jam 14.00 durasi 2 jam\"\nOutput:\n{\n  \"is_complete\": true,\n  \"final_confirmation\": false,\n  \"bot_response\": \"Data diterima:\\nNama: Keisha\\nUnit: Premium\\nTanggal: {{ $('Date & Time').item.json.tanggal_hari_ini }}\\nJam: 14:00\\nDurasi: 2 Jam\\n\\nApakah data di atas sudah benar? ketik 'YA' untuk konfirmasi.\",\n  \"nama\": \"Keisha\",\n  \"unit\": \"Premium\",\n  \"tanggal\": \"{{ $('Date & Time').item.json.tanggal_hari_ini }}\",\n  \"jam_mulai\": \"14:00\",\n  \"durasi\": \"2\"\n}\n\n## OUTPUT JSON (FLAT)\n{\n  \"is_complete\": false,\n  \"final_confirmation\": false,\n  \"bot_response\": \"...\",\n  \"nama\": \"\",\n  \"unit\": \"\",\n  \"tanggal\": \"\",\n  \"jam_mulai\": \"\",\n  \"durasi\": \"\"\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1280,
+        256
+      ],
+      "id": "ac84ddc5-eb46-457b-ab27-48d257e146ea",
+      "name": "AI Agent",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1000
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "aff50e9d-3dcd-4200-8fcc-6bf49ff073e9",
+              "leftValue": "={{ $json.final_confirmation }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1808,
+        320
+      ],
+      "id": "5784f990-9d71-47d5-b9e1-dde0f9f938e5",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://stunning-returns-manuals-sticker.trycloudflare.com/api/sendText",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n  JSON.stringify({\n    chatId: $('Webhook').first().json.body.payload.from,\n    session: \"default\",\n    text: $json.bot_response\n  })\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2016,
+        416
+      ],
+      "id": "ed384d68-da13-4d03-9fac-52bea9b7e852",
+      "name": "HTTP Request1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mxKwv5NubXkasPex",
+          "name": "WAHA_Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "fa13b3e2-9196-407d-8e89-17c6cf2839ec",
+              "leftValue": "={{ $json.body.payload.fromMe }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "1b2f80bb-1086-46a4-9eb8-d708703b0fdc",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        144,
+        16
+      ],
+      "id": "db1c8a77-7391-4386-bd8b-bfd31b15ab4b",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "operation": "formatDate",
+        "date": "={{ $now }}",
+        "format": "=cccc, d MMMM yyyy",
+        "outputFieldName": "tanggal_hari_ini",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [
+        1104,
+        112
+      ],
+      "id": "e6fc97e5-b210-4cf4-a7a6-08273192f4a6",
+      "name": "Date & Time"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('CONFIG').first().json.Sheet_ID }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 296059786,
+          "mode": "list",
+          "cachedResultName": "DB_Unit",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JMWu2WawB1ScebVfxEBJVDBKIdV8dyNcqi92sB76KXs/edit#gid=296059786"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2736,
+        256
+      ],
+      "id": "2f2b7678-0329-4a61-bbdc-5946d9d3af0a",
+      "name": "Get Units",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "aClqJvRitnytsfHa",
+          "name": "GoogleOuth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Webhook').first().json.body.payload.from }}",
+        "contextWindowLength": 3
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1552,
+        -48
+      ],
+      "id": "7f931eeb-8399-4522-a715-6a1aeebb2ffe",
+      "name": "Simple Memory1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Webhook').first().json.body.payload.body }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=## IDENTITAS\nAnda adalah \"Pitstop Buddy\", CS Virtual rental PS \"Pitstop Gaming\".\nLokasi: Ruko Maggiore Grande E7, Cihuni, Gading Serpong.\nGaya Bicara: Ramah, Asik, & Informatif (Emoji Friendly).\n\n## ATURAN FORMATTING (WHATSAPP STYLE)\n1. Gunakan tanda bintang satu (*) untuk menebalkan kata penting (Contoh: *Harga*, *Premium*).\n2. Gunakan Bullet Points (•) untuk daftar agar mudah dibaca.\n3. JANGAN gunakan Heading Markdown (##) atau Bold ganda (**). Cukup bintang satu.\n4. Output HANYA Teks biasa (DILARANG JSON).\n\n## TUGAS UTAMA (LOGIKA RESPON)\nAnalisis pesan user dan pilih respon yang paling tepat:\n\n1. **JIKA USER MENYAPA** (Contoh: \"Halo\", \"P\", \"Min\", \"Assalamualaikum\"):\n   Balas persis dengan kalimat ini:\n   \"Halo! Selamat datang di *Pitstop Gaming* 🏁.\n   Rental PS Premium dengan fasilitas *TV 4K, Full AC, & Private Area* yang super nyaman! 🎮\n\n   📍 *Lokasi:* Ruko Maggiore Grande E7, Cihuni (Gading Serpong).\n   Maps: https://maps.app.goo.gl/pitstop\n\n   Ada yang bisa dibantu kak? Mau tanya *Daftar Harga*, *List Game*, atau *Langsung Booking*?\"\n\n2. **JIKA USER TANYA \"APA BEDANYA?\"** (Perbedaan Regular vs Premium):\n   Jelaskan poin utamanya saja:\n   \"Bedanya di *Privasi* dan *Ukuran TV* kak:\n   \n   💎 *Premium:* Dapat **Private Area** (Lebih privat) & TV Besar **50 Inch**.\n   🎮 *Regular:* Area Santai (Open Space) & TV **43 Inch**.\n   \n   Mesinnya sama-sama *PS5* kok kak! Mau coba yang mana?\"\n\n3. **JIKA USER TANYA HARGA / UNIT:**\n   Jawablah berdasarkan **DATABASE** di bawah ini dengan format rapi.\n\n## DATABASE (SUMBER KEBENARAN)\n\n**A. INFO HARGA & PAKET**\n\n💎 *PAKET PREMIUM (Best Seller!)*\n• Fasilitas: PS5 + *Private Area* + TV 50\" 4K.\n• Weekday: *Rp 40rb/jam* (Paket 3 Jam 105rb, 5 Jam 165rb)\n• Weekend: *Rp 45rb/jam* (Paket 3 Jam 120rb, 5 Jam 180rb)\n\n🎮 *PAKET REGULAR (Santai)*\n• Fasilitas: PS5 + *TV 43\" 4K* (Open Area).\n• Weekday: *Rp 30rb/jam* (Paket 3 Jam 75rb, 5 Jam 120rb)\n• Weekend: *Rp 35rb/jam* (Paket 3 Jam 90rb, 5 Jam 135rb)\n\n**B. INFO F&B DAN GAMES**\n🍽️ *MENU:* Indomie, Nugget, French Fries, Ricebowl, Aneka Minuman.\n👾 *GAME HITS:* FC25, Tekken 8, God of War, Spiderman, It Takes Two.\n\n## KONTEKS USER:\n{{ $('Code in JavaScript3').item.json.customer_context }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1504,
+        -224
+      ],
+      "id": "716036d5-099f-4466-9294-51d2a3132dd3",
+      "name": "AI Agent GENERAL"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        1168,
+        1328
+      ],
+      "id": "c53f1b37-8e3f-4e6c-83a1-8f4b6f6080aa",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('CONFIG').first().json.Sheet_ID }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1990645798,
+          "mode": "list",
+          "cachedResultName": "DB_Booking",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JMWu2WawB1ScebVfxEBJVDBKIdV8dyNcqi92sB76KXs/edit#gid=1990645798"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1472,
+        1312
+      ],
+      "id": "4004a270-669c-4387-b606-4b03e295311e",
+      "name": "Get row(s) in sheet3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "aClqJvRitnytsfHa",
+          "name": "GoogleOuth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const LIMIT_MINUTES = 3; \nconst now = Date.now(); \nconst dataBatal = [];\n\nfor (const item of items) {\n    const booking = item.json;\n    \n    // --- DEBUGGING LOGIC ---\n    // Bersihkan status sebersih-bersihnya\n    const rawStatus = String(booking.Status || \"kosong\");\n    const currentStatus = rawStatus.trim().toLowerCase();\n\n    // Logika Pengecualian:\n    // Jika BUKAN 'pending', langsung skip (berhenti di sini)\n    if (currentStatus !== 'pending') continue; \n\n    // --- LOGIKA WAKTU ---\n    let timeString = String(booking.Timestamp || \"\").replace(\")\", \"\").trim();\n    if (!timeString) continue;\n\n    const bookingTime = new Date(timeString).getTime();\n    if (isNaN(bookingTime)) continue;\n    \n    const diffMs = now - bookingTime;\n    const diffMinutes = diffMs / 1000 / 60; \n\n    // Jika telat > 3 menit\n    if (diffMinutes > LIMIT_MINUTES) {\n        dataBatal.push({\n            json: {\n                ...booking, // Bawa semua data (termasuk row_number)\n                \"Status_Baru\": \"Expired\",\n                \"Alasan\": `Expired (${Math.floor(diffMinutes)} min)`\n            }\n        });\n    }\n}\n\nreturn dataBatal;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        1312
+      ],
+      "id": "4b8f390a-ca21-47be-937c-481af5693654",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('CONFIG').first().json.Sheet_ID }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1990645798,
+          "mode": "list",
+          "cachedResultName": "DB_Booking",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JMWu2WawB1ScebVfxEBJVDBKIdV8dyNcqi92sB76KXs/edit#gid=1990645798"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "OrderID": "={{ $json[\"OrderID\"] }}",
+            "Status": "Expired"
+          },
+          "matchingColumns": [
+            "OrderID"
+          ],
+          "schema": [
+            {
+              "id": "OrderID",
+              "displayName": "OrderID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nama",
+              "displayName": "Nama",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "No_WA",
+              "displayName": "No_WA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Unit_ID",
+              "displayName": "Unit_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tanggal",
+              "displayName": "Tanggal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Jam_Mulai",
+              "displayName": "Jam_Mulai",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Durasi",
+              "displayName": "Durasi",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Jam_Selesai",
+              "displayName": "Jam_Selesai",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Total_Harga",
+              "displayName": "Total_Harga",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1888,
+        1312
+      ],
+      "id": "d1bfb75e-67c2-48ca-b192-25c90c7f91e4",
+      "name": "Update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "aClqJvRitnytsfHa",
+          "name": "GoogleOuth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('CONFIG').first().json.Sheet_ID }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1990645798,
+          "mode": "list",
+          "cachedResultName": "DB_Booking",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JMWu2WawB1ScebVfxEBJVDBKIdV8dyNcqi92sB76KXs/edit#gid=1990645798"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1136,
+        -144
+      ],
+      "id": "dc9f3ef2-a7f8-48f9-8562-a1ac56d6af6e",
+      "name": "Get row(s) in sheet4",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "aClqJvRitnytsfHa",
+          "name": "GoogleOuth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Ambil Nomor HP Pengirim dari Webhook (Session ID)\nconst userPhone = $('Webhook').first().json.body.payload.from;\n\n// 2. Ambil Data Booking dari Node Sebelumnya\nconst bookings = items.map(item => item.json);\n\n// 3. Setup Tanggal Hari Ini (WIB)\nconst now = new Date();\nconst todayStr = now.toLocaleDateString('en-CA', { timeZone: 'Asia/Jakarta' }); // YYYY-MM-DD\n\nlet infoBooking = \"User ini BELUM memiliki booking aktif.\";\nconst activeList = [];\n\nfor (const b of bookings) {\n    // --- FILTER 1: CEK NOMOR HP (PENTING!) ---\n    // Pastikan No_WA di database dan User sama.\n    // Kita gunakan String() agar aman membandingkan angka vs teks\n    if (String(b.No_WA) !== String(userPhone)) continue;\n\n    // --- FILTER 2: CEK STATUS ---\n    const status = String(b.Status).toUpperCase();\n    // Hanya ambil yang sudah BAYAR (Lunas) atau masih PENDING\n    if (status !== 'LUNAS' && status !== 'PENDING') continue;\n\n    // --- FILTER 3: CEK TANGGAL (Masa Depan Saja) ---\n    if (b.Tanggal < todayStr) continue;\n\n    // Jika lolos semua filter, catat!\n    activeList.push(`- 📅 ${b.Tanggal} | ⏰ ${b.Jam_Mulai}:00 | 🎮 ${b.Unit_ID} (${status})`);\n}\n\n// 4. Susun Kalimat Laporan untuk AI\nif (activeList.length > 0) {\n    infoBooking = \"User ini MEMILIKI booking aktif berikut:\\n\" + activeList.join(\"\\n\");\n}\n\n// 5. Output\nreturn [{\n    json: {\n        customer_context: infoBooking\n    }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1312,
+        -176
+      ],
+      "id": "9730ffa9-fbc3-446a-87bf-b4d4f7831fd1",
+      "name": "Code in JavaScript3"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Webhook').item.json.body.payload.body }}",
+        "options": {
+          "systemMessage": "=Kamu adalah Router Cerdas untuk \"Pitstop Gaming\".\nTugasmu: Klasifikasikan pesan user ke dalam: \"BOOKING\" atau \"GENERAL\".\n\n## 1. KATEGORI: GENERAL (Informasi & Pertanyaan)\nMasuk sini jika pesan berisi:\n- **Pertanyaan Info:** \"Ada game apa aja?\", \"Harganya berapa?\", \"Lokasi dimana?\".\n- **Partikel 'ya' dalam pertanyaan:** \"Buka jam berapa ya?\", \"Mahal ga ya?\", \"Ready ga ya?\". (JANGAN terkecoh, ini bukan persetujuan).\n- **Sapaan & Penutup:** \"Halo\", \"Min\", \"Oke makasih\", \"Siap thanks infonya\".\n\n## 2. KATEGORI: BOOKING (Transaksi)\nMasuk sini jika pesan berisi:\n- **Niat Sewa:** \"booking\", \"mau main\", \"sewa\", \"reservasi\", \"kosong ga?\".\n- **Data Spesifik:** User menyebut Angka Jam, Tanggal, Durasi, atau Nama Unit.\n- **Konfirmasi Singkat (JAWABAN):** \"Ya\", \"Y\", \"Ok\", \"Siap\", \"Benar\", \"Betul\", \"Gas\", \"Lanjut\".\n  *(Catatan: Jika user hanya menjawab \"Ya\" atau \"Oke\" tanpa konteks lain, anggap dia sedang menjawab pertanyaan Bot Booking).*\n\n## ⚠️ ATURAN PRIORITAS (EDGE CASES)\n1. **CEK PANJANG PESAN:** - Jika pesan 1-3 kata (Contoh: \"Ya\", \"Jam 5\", \"Premium\") -> **BOOKING**.\n   - Jika pesan panjang (>4 kata) dan bertanya (tanda tanya/tanya info) -> **GENERAL**.\n\nOUTPUT (Hanya satu kata):\nBOOKING\natau\nGENERAL\n\nPESAN USER:\n{{ $('Webhook').first().json.body.payload.body }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        528,
+        16
+      ],
+      "id": "92b3a910-2301-45d0-bc99-25c1082a3153",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://stunning-returns-manuals-sticker.trycloudflare.com/api/sendText",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"chatId\": \"{{ $('Get row(s) in sheet3').first().json.No_WA }}\",\n  \"text\": \"Halo Kak, status booking untuk:\\n\\n👤 Atas Nama: *{{ $('Get row(s) in sheet3').first().json.Nama }}*\\n📅 Tanggal: *{{ $('Get row(s) in sheet3').first().json.Tanggal }}*\\n⏰ Jam: *{{ $('Get row(s) in sheet3').first().json.Jam_Mulai }}*\\n\\nSaat ini sudah *EXPIRED* (dibatalkan otomatis) karena batas waktu pembayaran telah habis.\\n\\nSilakan booking ulang jika masih berminat ya, Kak. Terima kasih! 🙏\",\n  \"session\": \"default\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2096,
+        1312
+      ],
+      "id": "b4ac29b3-77df-4a9b-974d-819b41994a5c",
+      "name": "HTTP Request3",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "mxKwv5NubXkasPex",
+          "name": "WAHA_Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        528,
+        192
+      ],
+      "id": "6d3d00d7-269b-44e6-a6d0-bc050ec3527f",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Wnx1r6HhINUwimim",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1456,
+        -48
+      ],
+      "id": "2619933e-0c95-457f-be92-c7b4e864be41",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Wnx1r6HhINUwimim",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1232,
+        448
+      ],
+      "id": "6903e473-91b6-498e-9d0f-d63e29b21d18",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Wnx1r6HhINUwimim",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1424,
+        640
+      ],
+      "id": "4d53324c-d303-44af-9dd7-76224eeb47bc",
+      "name": "Google Gemini Chat Model3",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Wnx1r6HhINUwimim",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "let data = items[0].json;\n\n// JIKA AI membungkus dengan \"output\", kita bongkar!\nif (data.output) {\n    data = data.output;\n} \n// JIKA AI membungkus dengan \"json\", kita bongkar!\nelse if (data.json) {\n    data = data.json;\n}\n\n// Kembalikan isinya saja\nreturn { json: data };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1632,
+        256
+      ],
+      "id": "309dccd2-2b21-4651-81ee-826726b5422a",
+      "name": "Code in JavaScript4"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7ba8404d-9f89-4318-ba6e-ae6ab81ef7b3",
+              "name": "Sheet_ID",
+              "value": "1JMWu2WawB1ScebVfxEBJVDBKIdV8dyNcqi92sB76KXs",
+              "type": "string"
+            },
+            {
+              "id": "b14b1326-57c0-4544-9f90-0acb62a8ced4",
+              "name": "WA_Url",
+              "value": "https://stunning-returns-manuals-sticker.trycloudflare.com/api/sendText",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        384,
+        16
+      ],
+      "id": "a7757e80-c07b-44de-9d9f-17b0605c6665",
+      "name": "CONFIG"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7ba8404d-9f89-4318-ba6e-ae6ab81ef7b3",
+              "name": "Sheet_ID",
+              "value": "1JMWu2WawB1ScebVfxEBJVDBKIdV8dyNcqi92sB76KXs",
+              "type": "string"
+            },
+            {
+              "id": "b14b1326-57c0-4544-9f90-0acb62a8ced4",
+              "name": "WA_Url",
+              "value": "https://stunning-returns-manuals-sticker.trycloudflare.com/api/sendText",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1360,
+        1040
+      ],
+      "id": "6570fa02-ca39-40f5-b4d5-2967f48a09a3",
+      "name": "CONFIG1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7ba8404d-9f89-4318-ba6e-ae6ab81ef7b3",
+              "name": "Sheet_ID",
+              "value": "1JMWu2WawB1ScebVfxEBJVDBKIdV8dyNcqi92sB76KXs",
+              "type": "string"
+            },
+            {
+              "id": "b14b1326-57c0-4544-9f90-0acb62a8ced4",
+              "name": "WA_Url",
+              "value": "https://stunning-returns-manuals-sticker.trycloudflare.com/api/sendText",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1344,
+        1328
+      ],
+      "id": "01e13626-166a-4207-836c-f4ebbc600592",
+      "name": "CONFIG2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        []
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Date & Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Get Units",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Midtrans",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Midtrans Callback": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Midtrans": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Maintanace Harian": {
+      "main": [
+        [
+          {
+            "node": "CONFIG1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Clear sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clear sheet": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "CONFIG",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date & Time": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Units": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent GENERAL",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent GENERAL": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "CONFIG2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet3": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet4": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript3": {
+      "main": [
+        [
+          {
+            "node": "AI Agent GENERAL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent GENERAL",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Structured Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript4": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request5": {
+      "main": [
+        []
+      ]
+    },
+    "CONFIG": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CONFIG2": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "10d31edd-6fc8-490c-a772-d3d8db6af02a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b0752398e992966a8051f0e9670410259a5f925b28f5c5554c7626397f0539f9"
+  },
+  "id": "Hby62foyWewRfvHl",
+  "tags": []
+}
