@@ -24,7 +24,7 @@ Proyek ini mengimplementasikan sistem otomatisasi lengkap untuk rental PS "Pitst
 * **Payment Gateway:** Midtrans (Snap API)
 * **Messaging API:** WAHA (WhatsApp HTTP API)
 
-⚙️ Panduan Deployment Cepat
+## ⚙️ Panduan Deployment Cepat
 Proyek ini adalah workflow berbasis self-hosted webhook dan memerlukan langkah-langkah deployment yang cermat:
 **1. Prasyarat & Hosting**
 * Wajib Docker: Asumsi deployment menggunakan Docker untuk menjalankan kontainer n8n dan WAHA.
