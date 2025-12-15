@@ -12,7 +12,7 @@ Proyek ini mengimplementasikan sistem otomatisasi lengkap untuk rental PS "Pitst
 
 ### ⚙️ Transaction & Maintenance Engine
 * **Slot Checking:** Otomatis memeriksa ketersediaan Unit (Regular/Premium) di Google Sheets berdasarkan tanggal dan jam yang diminta.
-* **Price Calculation & Midtrans:** Midtrans digunakan untuk menghasilkan payment link Snap yang siap bayar.
+* **Price Calculation & Midtrans:** Logika harga (tarif Weekday/Weekend) dihitung di Code Node n8n. Midtrans berfungsi untuk menghasilkan payment link Snap yang siap bayar berdasarkan hasil perhitungan tersebut.
 * **Auto-Maintenance:** Menggunakan Cron Job (Schedule Trigger) untuk membatalkan booking yang berstatus "Pending" lebih dari 3 menit (expired payment).
 * **Daily Archival & Reporting:** Menggunakan Cron Job yang berjalan setiap malam untuk memindahkan data booking yang sukses ke sheet "Arsip Transaksi" untuk keperluan pelaporan dan maintenance data harian.
 * **Centralized Config:** Menggunakan Node CONFIG untuk mempermudah penggantian Sheet ID dan URL API.
