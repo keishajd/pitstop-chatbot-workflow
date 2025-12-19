@@ -41,3 +41,10 @@ Buka Node CONFIG di awal workflow dan ganti nilai placeholder berikut:
 
 **4. Finalisasi Webhook**
 * Salin Public Endpoint URL n8n Anda (Cloudflare Tunnel) dan daftarkan sebagai webhook di pengaturan WAHA dan Midtrans.
+
+## 📺 Video Demo
+[![Tonton Video Demo](https://img.youtube.com/vi/4e8Dr_qfS4c/0.jpg)](https://youtu.be/4e8Dr_qfS4c)
+
+## 🗺️ Workflow Architecture
+Untuk melihat alur kerja lengkap, silakan cek dokumen berikut:
+[📄 Lihat Workflow Architecture (PDF)](assets/Workflow.pdf)
